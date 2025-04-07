@@ -1,0 +1,23 @@
+services:
+  app:
+    container_name: carteira_financeira_app
+    build: .
+    command: ./.docker/start.sh
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/home/node/app
+
+  db:
+    image: mysql:8.0.30-debian
+    container_name: carteira_financeira_db
+    environment:
+      MYSQL_DATABASE: carteira_financeira
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - '3306:3306'
+
+volumes:
+  mysql_data:
