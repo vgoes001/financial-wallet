@@ -8,16 +8,25 @@ export type UserConstructorProps = {
   updatedAt?: Date;
   createdAt?: Date;
   deletedAt?: Date;
-}
+};
+
+export type UserOutput = {
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+  updatedAt: Date;
+  createdAt: Date;
+  deletedAt: Date;
+};
 
 export type UserCreateProps = {
   name: string;
   email: string;
   password: string;
-}
+};
 
-
-export class User{
+export class User {
   id: string;
 
   name: string;
@@ -32,7 +41,15 @@ export class User{
 
   deletedAt?: Date;
 
-  constructor({ email, name, password, id, createdAt, deletedAt, updatedAt }: UserConstructorProps){
+  constructor({
+    email,
+    name,
+    password,
+    id,
+    createdAt,
+    deletedAt,
+    updatedAt,
+  }: UserConstructorProps) {
     this.email = email;
     this.name = name;
     this.password = password;
@@ -42,8 +59,7 @@ export class User{
     this.deletedAt = deletedAt;
   }
 
-  static create(props: UserCreateProps){
+  static create(props: UserCreateProps) {
     return new User(props);
   }
-
 }
