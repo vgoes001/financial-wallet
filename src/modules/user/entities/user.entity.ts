@@ -62,4 +62,8 @@ export class User {
   static create(props: UserCreateProps) {
     return new User(props);
   }
+
+  changePassword(password: string) {
+    this.password = password;
+  }
 }
