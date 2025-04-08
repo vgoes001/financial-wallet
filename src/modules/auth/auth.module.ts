@@ -3,6 +3,9 @@ import { AuthFake } from './auth.fake';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { AuthServiceImpl } from './auth.service';
+import { APP_GUARD, Reflector } from '@nestjs/core';
+import { IAuthService } from './auth.interface';
+import { AuthGuard } from './guards/auth.guard';
 
 @Module({
   imports: [
@@ -24,6 +27,17 @@ import { AuthServiceImpl } from './auth.service';
     {
       provide: 'AuthService',
       useClass: AuthServiceImpl,
+    },
+    {
+      provide: APP_GUARD,
+      useFactory: (
+        reflector: Reflector,
+        authService: IAuthService,
+        configService: ConfigService,
+      ) => {
+        return new AuthGuard(reflector, authService, configService);
+      },
+      inject: [Reflector, 'AuthService', ConfigService],
     },
   ],
   exports: [
