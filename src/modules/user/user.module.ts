@@ -8,6 +8,8 @@ import { IUserRepository } from './repository/user-repository';
 import { IAuthService } from '../auth/auth.interface';
 import { UserSequelizeRepository } from './repository/sequelize/user-sequelize.repository';
 import { AuthFake } from '../auth/auth.fake';
+import { SignInUserUseCase } from './use-cases/sign-in/sign-in.use-case';
+import { AuthServiceImpl } from '../auth/auth.service';
 
 @Module({
   imports: [SequelizeModule.forFeature([UserModel]), AuthModule],
@@ -29,7 +31,15 @@ import { AuthFake } from '../auth/auth.fake';
         userRepository: IUserRepository,
         authService: IAuthService,
       ) => new CreateUserUseCase(userRepository, authService),
-      inject: ['UserRepository', AuthFake],
+      inject: ['UserRepository', 'AuthService'],
+    },
+    {
+      provide: SignInUserUseCase,
+      useFactory: (
+        userRepository: IUserRepository,
+        authService: IAuthService,
+      ) => new SignInUserUseCase(userRepository, authService),
+      inject: ['UserRepository', 'AuthService'],
     },
   ],
   exports: [],
