@@ -11,6 +11,7 @@ import { CreateUserUseCase } from '../use-cases/create-user/create-user.use-case
 import { CreateUserDto } from './dtos/create-user.dto';
 import { SignInUserUseCase } from '../use-cases/sign-in/sign-in.use-case';
 import { AuthUserDto } from './dtos/auth-user.dto';
+import { CreateUserDocs, SignInDocs } from './user.docs';
 
 @Controller('users')
 export class UserController {
@@ -20,11 +21,13 @@ export class UserController {
   @Inject(SignInUserUseCase)
   private signInUserUseCase: SignInUserUseCase;
 
+  @CreateUserDocs
   @Post()
   async createUser(@Body() createUserDto: CreateUserDto): Promise<UserOutput> {
     return this.createUserUseCase.execute(createUserDto);
   }
 
+  @SignInDocs
   @Post('auth')
   @HttpCode(HttpStatus.OK)
   async auth(@Body() authUserDto: AuthUserDto) {
