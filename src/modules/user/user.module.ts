@@ -42,6 +42,11 @@ import { AuthServiceImpl } from '../auth/auth.service';
       inject: ['UserRepository', 'AuthService'],
     },
   ],
-  exports: [],
+  exports: [
+    {
+      provide: 'UserRepository',
+      useExisting: UserSequelizeRepository,
+    },
+  ],
 })
 export class UserModule {}
