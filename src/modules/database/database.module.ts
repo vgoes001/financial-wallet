@@ -2,6 +2,7 @@ import { Global, Logger, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { UserModel } from '../user/repository/sequelize/user.model';
+import { TransferModel } from '../transfer/repository/sequelize/transfer.model';
 
 @Global()
 @Module({
@@ -15,7 +16,7 @@ import { UserModel } from '../user/repository/sequelize/user.model';
           username: configService.get('DB_USER'),
           password: configService.get('DB_PASSWORD'),
           database: configService.get('DB_DATABASE'),
-          models: [UserModel],
+          models: [UserModel, TransferModel],
           logging: (msg) => {
             if (configService.get('DB_LOGGING') === 'true') {
               Logger.log(msg, 'Sequelize');
