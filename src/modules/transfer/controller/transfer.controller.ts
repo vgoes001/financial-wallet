@@ -13,8 +13,6 @@ export class TransferController {
     @Body() createTransferDto: CreateTransferDto,
     @UserId() userId: string,
   ) {
-    console.log('userId', userId);
-    console.log('createTransferDto', createTransferDto);
     const { receiverKey, amount } = createTransferDto;
 
     return this.createTransferUseCase.execute({
