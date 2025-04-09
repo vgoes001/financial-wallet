@@ -1,4 +1,3 @@
-
 export enum TransferStatusEnum {
   COMPLETED = 'completed',
   FAILED = 'failed',
@@ -7,11 +6,23 @@ export enum TransferStatusEnum {
   IN_PROGRESS = 'in_progress',
 }
 
-export class TransferStatusVO{
+export class TransferStatusVO {
   public readonly value: TransferStatusEnum;
 
   constructor(value: TransferStatusEnum) {
     this.value = value;
+  }
+
+  static createFromValue(value: string): TransferStatusVO {
+    const status = Object.values(TransferStatusEnum).find(
+      (enumValue) => enumValue === value,
+    );
+
+    if (!status) {
+      throw new Error(`Invalid transfer status: ${value}`);
+    }
+
+    return new TransferStatusVO(status as TransferStatusEnum);
   }
 
   static createCompleted(): TransferStatusVO {
@@ -33,6 +44,4 @@ export class TransferStatusVO{
   static createInProgress(): TransferStatusVO {
     return new TransferStatusVO(TransferStatusEnum.IN_PROGRESS);
   }
-
-
 }
