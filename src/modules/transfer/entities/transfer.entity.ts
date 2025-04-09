@@ -1,12 +1,33 @@
 import { randomUUID } from 'node:crypto';
-import { TransferStatusVO } from './transfer-status.vo';
+import { TransferStatusEnum, TransferStatusVO } from './transfer-status.vo';
+import { EntityValidationError } from '../../shared/errors/entity-validation.error';
 
 export type TransferConstructorProps = {
   id?: string;
   senderId: string;
   receiverId: string;
+  status: TransferStatusVO;
+  amount: number;
+  transferDate: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
+};
+
+export type TransferCreateProps = {
+  senderId: string;
+  receiverId: string;
   status?: TransferStatusVO;
   amount: number;
+  transferDate?: Date;
+};
+
+export type TransferOutput = {
+  id: string;
+  senderId: string;
+  receiverId: string;
+  amount: number;
+  status: TransferStatusEnum;
   transferDate: Date;
   createdAt?: Date;
   updatedAt?: Date;
@@ -47,10 +68,26 @@ export class Transfer {
     this.senderId = senderId;
     this.receiverId = receiverId;
     this.transferDate = transferDate;
-    this.status = status ?? TransferStatusVO.createInProgress();
+    this.status = status;
     this.amount = amount;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
     this.deletedAt = deletedAt;
+
+    this.validate();
+  }
+
+  private validate() {
+    if (this.amount <= 0) {
+      throw new EntityValidationError('Amount must be greater than 0');
+    }
+  }
+
+  static create(props: TransferCreateProps) {
+    return new Transfer({
+      ...props,
+      status: props.status ?? TransferStatusVO.createInProgress(),
+      transferDate: new Date(),
+    });
   }
 }
