@@ -10,6 +10,7 @@ import { UserModule } from '../user/user.module';
 import { CalculateBalanceService } from '../financial-events/service/calculate-balance.service';
 import { IFinancialEventRepository } from '../financial-events/repository/financial-event.repository';
 import { FinancialEventModule } from '../financial-events/financial-event.module';
+import { ReverseTransferUseCase } from './use-cases/reverse-transfer/reverse-transfer.use-case';
 
 @Module({
   imports: [
@@ -53,6 +54,18 @@ import { FinancialEventModule } from '../financial-events/financial-event.module
         'FinancialEventRepository',
         CalculateBalanceService,
       ],
+    },
+    {
+      provide: ReverseTransferUseCase,
+      useFactory: (
+        transferRepository: ITransferRepository,
+        financialEventRepository: IFinancialEventRepository,
+      ) =>
+        new ReverseTransferUseCase(
+          transferRepository,
+          financialEventRepository,
+        ),
+      inject: ['TransferRepository', 'FinancialEventRepository'],
     },
   ],
 })
