@@ -18,6 +18,14 @@ services:
       - mysql_data:/var/lib/mysql
     ports:
       - '3306:3306'
+  rabbitmq:
+    image: rabbitmq:3.8-management-alpine
+    hostname: rabbitmq
+    ports:
+      - 15672:15672
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
 
 volumes:
   mysql_data:

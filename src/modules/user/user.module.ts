@@ -13,15 +13,15 @@ import { IFinancialEventRepository } from '../financial-events/repository/financ
 import { CurrentBalanceUseCase } from './use-cases/current-balance/current-balance.use-case';
 import { CalculateBalanceService } from '../financial-events/service/calculate-balance.service';
 import { TransferModule } from '../transfer/transfer.module';
-import { EventDispatcherInterface } from '../event/event-dispatcher.interface';
-import { EventModule } from '../event/event.module';
+import { IMessageBroker } from '../message-broker/message-broker.interface';
+import { RabbitmqModule } from '../message-broker/rabbittmq.module';
 
 @Module({
   imports: [
     SequelizeModule.forFeature([UserModel]),
     AuthModule,
     FinancialEventModule,
-    EventModule,
+    RabbitmqModule,
     forwardRef(() => TransferModule),
   ],
   controllers: [UserController],
@@ -41,9 +41,9 @@ import { EventModule } from '../event/event.module';
       useFactory: (
         userRepository: IUserRepository,
         authService: IAuthService,
-        EventDispatcher: EventDispatcherInterface,
-      ) => new CreateUserUseCase(userRepository, authService, EventDispatcher),
-      inject: ['UserRepository', 'AuthService', 'EventDispatcher'],
+        messageBroker: IMessageBroker,
+      ) => new CreateUserUseCase(userRepository, authService, messageBroker),
+      inject: ['UserRepository', 'AuthService', 'MessageBroker'],
     },
     {
       provide: SignInUserUseCase,

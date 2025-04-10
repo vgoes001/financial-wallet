@@ -1,16 +1,24 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { OnEvent } from '@nestjs/event-emitter';
-import { IFinancialEventRepository } from '../repository/financial-event.repository';
 import { CreateInitialCreditUseCase } from '../use-cases/create-initial-credit/create-initial-credit.use-case';
 import { User } from 'src/modules/user/entities/user.entity';
+import { RabbitSubscribe } from '@golevelup/nestjs-rabbitmq';
+import { Public } from 'src/modules/auth/decorators/public.decorator';
+import { ModuleRef } from '@nestjs/core';
 
 @Injectable()
 export class FinancialEventHandler {
-  @Inject(CreateInitialCreditUseCase)
-  private createInitialCreditUseCase: CreateInitialCreditUseCase;
+  constructor(private moduleRef: ModuleRef) {}
 
-  @OnEvent('user.created')
+  @RabbitSubscribe({
+    exchange: 'amq.direct',
+    routingKey: 'user.created',
+    queue: 'user.created',
+    allowNonJsonMessages: true,
+  })
   async handleUserCreatedEvent(payload: User) {
-    await this.createInitialCreditUseCase.execute(payload.id);
+    const createInitialCreditUseCase = await this.moduleRef.resolve(
+      CreateInitialCreditUseCase,
+    );
+    await createInitialCreditUseCase.execute(payload.id);
   }
 }

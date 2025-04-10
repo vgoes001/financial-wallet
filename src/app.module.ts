@@ -7,15 +7,15 @@ import { DatabaseModule } from './modules/database/database.module';
 import { ConfigModule } from '@nestjs/config';
 import { TransferModule } from './modules/transfer/transfer.module';
 import { FinancialEventModule } from './modules/financial-events/financial-event.module';
-import { EventModule } from './modules/event/event.module';
+import { RabbitmqModule } from './modules/message-broker/rabbittmq.module';
 
 @Module({
   imports: [
     UserModule,
     TransferModule,
     FinancialEventModule,
-    EventModule,
     AuthModule,
+    RabbitmqModule,
     DatabaseModule,
     ConfigModule.forRoot({
       isGlobal: true,

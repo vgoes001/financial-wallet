@@ -4,15 +4,15 @@ import { UserModel } from '../../repository/sequelize/user.model';
 import { AuthServiceImpl } from '../../../auth/auth.service';
 import { Sequelize } from 'sequelize-typescript';
 import { BadRequestException } from '@nestjs/common';
-import { EventDispatcher } from '../../../event/event-dispatcher';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { IMessageBroker } from '../../../message-broker/message-broker.interface';
+import { MessageBrokerFakeService } from '../../../message-broker/message-broker-fake.service';
 
 describe('CreateUserUseCase Integration Test', () => {
   let dbConnection: Sequelize;
   let createUserUseCase: CreateUserUseCase;
   let userRepository: UserSequelizeRepository;
   let authService: AuthServiceImpl;
-  let eventDispatcher: EventDispatcher;
+  let broker: IMessageBroker;
 
   beforeAll(async () => {
     dbConnection = new Sequelize({
@@ -31,13 +31,14 @@ describe('CreateUserUseCase Integration Test', () => {
     await dbConnection.sync({
       force: true,
     });
-    const eventDispatcher = EventDispatcher.getInstance(new EventEmitter2());
+    const broker = new MessageBrokerFakeService();
+
     authService = new AuthServiceImpl();
     userRepository = new UserSequelizeRepository(UserModel);
     createUserUseCase = new CreateUserUseCase(
       userRepository,
       authService,
-      eventDispatcher,
+      broker,
     );
   });
 
