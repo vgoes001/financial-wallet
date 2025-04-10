@@ -6,17 +6,26 @@ import { UserMapper } from '../../mapper/user.mapper';
 import { BadRequestException } from '@nestjs/common';
 import { IUserRepository } from '../../repository/user-repository';
 import { AuthFake } from '../../../auth/auth.fake';
+import { EventDispatcherInterface } from '../../../../modules/event/event-dispatcher.interface';
+import { EventDispatcherFake } from '../../../../modules/event/event-dispatcher-in-memory';
 
 describe('CreateUserUseCase', () => {
   let createUserUseCase: CreateUserUseCase;
   let userRepository: IUserRepository;
   let authService: IAuthService;
+  let eventDispatcher: EventDispatcherInterface;
 
   describe('execute', () => {
     beforeEach(() => {
       userRepository = new UserInMemoryRepository();
       authService = new AuthFake();
-      createUserUseCase = new CreateUserUseCase(userRepository, authService);
+      eventDispatcher = new EventDispatcherFake();
+
+      createUserUseCase = new CreateUserUseCase(
+        userRepository,
+        authService,
+        eventDispatcher,
+      );
     });
 
     it('should create a new user', async () => {
