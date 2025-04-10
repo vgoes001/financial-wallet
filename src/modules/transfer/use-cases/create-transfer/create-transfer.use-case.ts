@@ -9,6 +9,7 @@ import { TransferStatusVO } from '../../entities/transfer-status.vo';
 import { CalculateBalanceService } from '../../../financial-events/service/calculate-balance.service';
 import { IFinancialEventRepository } from '../../../financial-events/repository/financial-event.repository';
 import { InsufficientBalanceError } from '../../../shared/errors/insufficient-balance.error';
+import { IUnitOfWork } from 'src/modules/shared/unit-of-work/unit-of-work';
 
 export class CreateTransferUseCase {
   constructor(
@@ -16,6 +17,7 @@ export class CreateTransferUseCase {
     private userRepository: IUserRepository,
     private financialEventRepository: IFinancialEventRepository,
     private calculateBalanceService: CalculateBalanceService,
+    private unitOfWork: IUnitOfWork,
   ) {}
 
   async execute(input: CreateTransferInput) {
@@ -50,9 +52,13 @@ export class CreateTransferUseCase {
 
     const financialEventsCreated = transfer.createFinancialEvents();
 
-    const transferCreated = await this.transferRepository.create(transfer);
+    const transferCreated = await this.unitOfWork.run(async () => {
+      const transferCreated = await this.transferRepository.create(transfer);
 
-    await this.financialEventRepository.createMany(financialEventsCreated);
+      await this.financialEventRepository.createMany(financialEventsCreated);
+
+      return transferCreated;
+    });
 
     return TransferMapper.toOutput(transferCreated);
   }

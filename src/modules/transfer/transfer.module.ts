@@ -11,6 +11,8 @@ import { CalculateBalanceService } from '../financial-events/service/calculate-b
 import { IFinancialEventRepository } from '../financial-events/repository/financial-event.repository';
 import { FinancialEventModule } from '../financial-events/financial-event.module';
 import { ReverseTransferUseCase } from './use-cases/reverse-transfer/reverse-transfer.use-case';
+import { IUnitOfWork } from '../shared/unit-of-work/unit-of-work';
+import { UnitOfWorkSequelize } from '../shared/unit-of-work/unit-of-work-sequelize';
 
 @Module({
   imports: [
@@ -22,9 +24,11 @@ import { ReverseTransferUseCase } from './use-cases/reverse-transfer/reverse-tra
   providers: [
     {
       provide: TransferSequelizeRepository,
-      useFactory: (transferModel: typeof TransferModel) =>
-        new TransferSequelizeRepository(transferModel),
-      inject: [getModelToken(TransferModel)],
+      useFactory: (
+        transferModel: typeof TransferModel,
+        uow: UnitOfWorkSequelize,
+      ) => new TransferSequelizeRepository(transferModel, uow),
+      inject: [getModelToken(TransferModel), 'UnitOfWork'],
     },
     {
       provide: 'TransferRepository',
@@ -41,18 +45,21 @@ import { ReverseTransferUseCase } from './use-cases/reverse-transfer/reverse-tra
         userRepository: IUserRepository,
         financialEventsRepository: IFinancialEventRepository,
         calculateBalanceService: CalculateBalanceService,
+        unitOfWork: IUnitOfWork,
       ) =>
         new CreateTransferUseCase(
           transferRepository,
           userRepository,
           financialEventsRepository,
           calculateBalanceService,
+          unitOfWork,
         ),
       inject: [
         'TransferRepository',
         'UserRepository',
         'FinancialEventRepository',
         CalculateBalanceService,
+        'UnitOfWork',
       ],
     },
     {
@@ -60,12 +67,14 @@ import { ReverseTransferUseCase } from './use-cases/reverse-transfer/reverse-tra
       useFactory: (
         transferRepository: ITransferRepository,
         financialEventRepository: IFinancialEventRepository,
+        unitOfWork: IUnitOfWork,
       ) =>
         new ReverseTransferUseCase(
           transferRepository,
           financialEventRepository,
+          unitOfWork,
         ),
-      inject: ['TransferRepository', 'FinancialEventRepository'],
+      inject: ['TransferRepository', 'FinancialEventRepository', 'UnitOfWork'],
     },
   ],
   exports: [

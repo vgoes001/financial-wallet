@@ -4,6 +4,8 @@ import { FinancialEventModel } from './repository/sequelize/financial-event.mode
 import { FinancialEventSequelizeRepository } from './repository/sequelize/financial-event-sequelize.repository';
 import { FinancialEventHandler } from './handlers/financial-event.handler';
 import { CreateInitialCreditUseCase } from './use-cases/create-initial-credit/create-initial-credit.use-case';
+import { IUnitOfWork } from '../shared/unit-of-work/unit-of-work';
+import { UnitOfWorkSequelize } from '../shared/unit-of-work/unit-of-work-sequelize';
 
 @Module({
   imports: [SequelizeModule.forFeature([FinancialEventModel])],
@@ -11,9 +13,11 @@ import { CreateInitialCreditUseCase } from './use-cases/create-initial-credit/cr
   providers: [
     {
       provide: FinancialEventSequelizeRepository,
-      useFactory: (financialEventModel: typeof FinancialEventModel) =>
-        new FinancialEventSequelizeRepository(financialEventModel),
-      inject: [getModelToken(FinancialEventModel)],
+      useFactory: (
+        financialEventModel: typeof FinancialEventModel,
+        uow: UnitOfWorkSequelize,
+      ) => new FinancialEventSequelizeRepository(financialEventModel, uow),
+      inject: [getModelToken(FinancialEventModel), 'UnitOfWork'],
     },
     {
       provide: 'FinancialEventRepository',

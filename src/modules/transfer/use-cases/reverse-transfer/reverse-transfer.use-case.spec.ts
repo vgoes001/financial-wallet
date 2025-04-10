@@ -1,22 +1,27 @@
-import { TransferNotReversibleError } from '../../..//shared/errors/transfer-not-reversible.error';
+import { TransferNotReversibleError } from '../../../shared/errors/transfer-not-reversible.error';
 import { TransferInMemoryRepository } from '../../repository/in-memory/transfer-in-memory.repository';
 import { ReverseTransferUseCase } from './reverse-transfer.use-case';
 import { Transfer } from '../../entities/transfer.entity';
 import { TransferStatusVO } from '../../entities/transfer-status.vo';
 import { FinancialEventInMemory } from '../../../financial-events/repository/in-memory/financial-event-in-memory';
+import { IUnitOfWork } from '../../../shared/unit-of-work/unit-of-work';
+import { UnitOfWorkFake } from '../../../shared/unit-of-work/unit-of-work-fake';
 
 describe('ReverseTransferUseCase', () => {
   let transferRepository: TransferInMemoryRepository;
   let financialEventRepository: FinancialEventInMemory;
   let reverseTransferUseCase: ReverseTransferUseCase;
+  let unitOfWork: IUnitOfWork;
 
   describe('execute', () => {
     beforeEach(() => {
       transferRepository = new TransferInMemoryRepository();
       financialEventRepository = new FinancialEventInMemory();
+      unitOfWork = new UnitOfWorkFake();
       reverseTransferUseCase = new ReverseTransferUseCase(
         transferRepository,
         financialEventRepository,
+        unitOfWork,
       );
     });
 
