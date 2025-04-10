@@ -40,8 +40,8 @@ export class FinancialEventModel extends Model<FinancialEventModelAttributes> {
   declare amount: number;
 
   @ForeignKey(() => TransferModel)
-  @Column({ allowNull: false, type: DataType.UUID, field: 'transfer_id' })
-  declare tranferId: string;
+  @Column({ allowNull: true, type: DataType.UUID, field: 'transfer_id' })
+  declare tranferId: string | null;
 
   @Column({ allowNull: false, type: DataType.STRING(20) })
   declare type: string;

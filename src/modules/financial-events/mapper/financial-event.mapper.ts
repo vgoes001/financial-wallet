@@ -23,7 +23,7 @@ export class FinancialEventMapper {
       return null;
     }
     return new FinancialEvent({
-      amount: financialEventModel.amount,
+      amount: Number(financialEventModel.amount),
       createdAt: financialEventModel.createdAt,
       deletedAt: financialEventModel.deletedAt,
       id: financialEventModel.id,

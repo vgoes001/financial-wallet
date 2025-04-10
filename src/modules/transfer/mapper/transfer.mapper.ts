@@ -1,7 +1,4 @@
-import {
-  TransferStatusEnum,
-  TransferStatusVO,
-} from '../entities/transfer-status.vo';
+import { TransferStatusVO } from '../entities/transfer-status.vo';
 import { Transfer, TransferOutput } from '../entities/transfer.entity';
 import { TransferModelAttributes } from '../repository/sequelize/transfer.model';
 

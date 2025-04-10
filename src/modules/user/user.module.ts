@@ -10,9 +10,15 @@ import { UserSequelizeRepository } from './repository/sequelize/user-sequelize.r
 import { AuthFake } from '../auth/auth.fake';
 import { SignInUserUseCase } from './use-cases/sign-in/sign-in.use-case';
 import { AuthServiceImpl } from '../auth/auth.service';
+import { FinancialEventModule } from '../financial-events/financial-event.module';
+import { IFinancialEventRepository } from '../financial-events/repository/financial-event.repository';
 
 @Module({
-  imports: [SequelizeModule.forFeature([UserModel]), AuthModule],
+  imports: [
+    SequelizeModule.forFeature([UserModel]),
+    AuthModule,
+    FinancialEventModule,
+  ],
   controllers: [UserController],
   providers: [
     {
@@ -29,9 +35,15 @@ import { AuthServiceImpl } from '../auth/auth.service';
       provide: CreateUserUseCase,
       useFactory: (
         userRepository: IUserRepository,
+        financialEventRepository: IFinancialEventRepository,
         authService: IAuthService,
-      ) => new CreateUserUseCase(userRepository, authService),
-      inject: ['UserRepository', 'AuthService'],
+      ) =>
+        new CreateUserUseCase(
+          userRepository,
+          financialEventRepository,
+          authService,
+        ),
+      inject: ['UserRepository', 'FinancialEventRepository', 'AuthService'],
     },
     {
       provide: SignInUserUseCase,
