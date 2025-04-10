@@ -3,11 +3,13 @@ import { IFinancialEventRepository } from '../../../../modules/financial-events/
 import { TransferNotReversibleError } from '../../../../modules/shared/errors/transfer-not-reversible.error';
 import { ITransferRepository } from '../../repository/transfer-repository';
 import { ReverseTransferInput } from './reverse-transfer.input';
+import { IUnitOfWork } from 'src/modules/shared/unit-of-work/unit-of-work';
 
 export class ReverseTransferUseCase {
   constructor(
     private transferRepository: ITransferRepository,
     private financialEventRepository: IFinancialEventRepository,
+    private unitOfWork: IUnitOfWork,
   ) {}
 
   async execute(input: ReverseTransferInput) {
@@ -23,7 +25,9 @@ export class ReverseTransferUseCase {
 
     transfer.refund();
     const financialEventsReversed = transfer.createReversedFinancialEvents();
-    await this.financialEventRepository.createMany(financialEventsReversed);
-    await this.transferRepository.update(transfer);
+    await this.unitOfWork.run(async () => {
+      await this.financialEventRepository.createMany(financialEventsReversed);
+      await this.transferRepository.update(transfer);
+    });
   }
 }

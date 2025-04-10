@@ -12,6 +12,8 @@ import { CalculateBalanceService } from '../../../financial-events/service/calcu
 import { FinancialEventInMemory } from '../../../financial-events/repository/in-memory/financial-event-in-memory';
 import { FinancialEvent } from '../../../financial-events/entities/financial-event.entity';
 import { FinancialEventType } from '../../../financial-events/entities/financial-event-type.vo';
+import { IUnitOfWork } from 'src/modules/shared/unit-of-work/unit-of-work';
+import { UnitOfWorkFake } from '../../../shared/unit-of-work/unit-of-work-fake';
 
 describe('CreateTransferUseCase', () => {
   let createTransferUseCase: CreateTransferUseCase;
@@ -19,17 +21,21 @@ describe('CreateTransferUseCase', () => {
   let userRepository: IUserRepository;
   let financialEventRepository: IFinancialEventRepository;
   let calculateBalanceService: CalculateBalanceService;
+  let unitOfWork: IUnitOfWork;
+
   describe('execute', () => {
     beforeEach(() => {
       userRepository = new UserInMemoryRepository();
       transferRepository = new TransferInMemoryRepository();
       financialEventRepository = new FinancialEventInMemory();
       calculateBalanceService = new CalculateBalanceService();
+      unitOfWork = new UnitOfWorkFake();
       createTransferUseCase = new CreateTransferUseCase(
         transferRepository,
         userRepository,
         financialEventRepository,
         calculateBalanceService,
+        unitOfWork,
       );
     });
 
