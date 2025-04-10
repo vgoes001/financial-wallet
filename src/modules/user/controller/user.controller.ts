@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Inject,
@@ -11,8 +12,10 @@ import { CreateUserUseCase } from '../use-cases/create-user/create-user.use-case
 import { CreateUserDto } from './dtos/create-user.dto';
 import { SignInUserUseCase } from '../use-cases/sign-in/sign-in.use-case';
 import { AuthUserDto } from './dtos/auth-user.dto';
-import { CreateUserDocs, SignInDocs } from './user.docs';
+import { CreateUserDocs, CurrentBalanceDocs, SignInDocs } from './user.docs';
 import { Public } from 'src/modules/auth/decorators/public.decorator';
+import { UserId } from 'src/modules/shared/decorators/user-id.decorator';
+import { CurrentBalanceUseCase } from '../use-cases/current-balance/current-balance.use-case';
 
 @Controller('users')
 export class UserController {
@@ -21,6 +24,9 @@ export class UserController {
 
   @Inject(SignInUserUseCase)
   private signInUserUseCase: SignInUserUseCase;
+
+  @Inject(CurrentBalanceUseCase)
+  private currentBalanceUseCase: CurrentBalanceUseCase;
 
   @CreateUserDocs
   @Public()
@@ -35,5 +41,13 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   async auth(@Body() authUserDto: AuthUserDto) {
     return this.signInUserUseCase.execute(authUserDto);
+  }
+
+  @CurrentBalanceDocs
+  @Get('me/wallet')
+  async currentBalance(@UserId() userId: string) {
+    return {
+      balance: await this.currentBalanceUseCase.execute({ userId }),
+    };
   }
 }

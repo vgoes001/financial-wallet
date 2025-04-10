@@ -99,3 +99,32 @@ export function CreateUserDocs(
     }),
   )(target, key, descriptor);
 }
+
+export function CurrentBalanceDocs(
+  target: any,
+  key: string | symbol,
+  descriptor?: PropertyDescriptor,
+) {
+  applyDecorators(
+    ApiOperation({
+      summary: 'Retorna o saldo atual do usuário',
+      description: 'Retorna o saldo atual do usuário logado.',
+    }),
+    ApiResponse({
+      status: HttpStatus.OK,
+      description: 'Saldo atual do usuário',
+      example: {
+        balance: 550,
+      },
+    }),
+    ApiResponse({
+      status: HttpStatus.BAD_REQUEST,
+      description: 'Erro de validação',
+      example: {
+        message: 'User already exists',
+        error: 'Bad Request',
+        statusCode: HttpStatus.BAD_REQUEST,
+      },
+    }),
+  )(target, key, descriptor);
+}
