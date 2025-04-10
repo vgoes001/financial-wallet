@@ -4,10 +4,13 @@ import { UserMapper } from '../../mapper/user.mapper';
 import { User } from '../../entities/user.entity';
 import { CreateUserInput } from './create-user.input';
 import { IAuthService } from 'src/modules/auth/auth.interface';
+import { IFinancialEventRepository } from 'src/modules/financial-events/repository/financial-event.repository';
+import { FinancialEvent } from 'src/modules/financial-events/entities/financial-event.entity';
 
 export class CreateUserUseCase {
   constructor(
     private userRepository: IUserRepository,
+    private financialEventRepository: IFinancialEventRepository,
     private authService: IAuthService,
   ) {}
 
@@ -24,6 +27,8 @@ export class CreateUserUseCase {
     user.changePassword(hashedPassword);
 
     const userCreated = await this.userRepository.create(user);
+    const financialEvent = FinancialEvent.createInitialCredit(userCreated.id);
+    await this.financialEventRepository.create(financialEvent);
 
     return UserMapper.toOutput(userCreated);
   }

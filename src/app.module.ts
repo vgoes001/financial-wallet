@@ -6,11 +6,13 @@ import { AuthModule } from './modules/auth/auth.module';
 import { DatabaseModule } from './modules/database/database.module';
 import { ConfigModule } from '@nestjs/config';
 import { TransferModule } from './modules/transfer/transfer.module';
+import { FinancialEventModule } from './modules/financial-events/financial-event.module';
 
 @Module({
   imports: [
     UserModule,
     TransferModule,
+    FinancialEventModule,
     AuthModule,
     DatabaseModule,
     ConfigModule.forRoot({

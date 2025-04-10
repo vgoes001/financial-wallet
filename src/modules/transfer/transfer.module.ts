@@ -7,9 +7,16 @@ import { CreateTransferUseCase } from './use-cases/create-transfer.use-case';
 import { ITransferRepository } from './repository/transfer-repository';
 import { IUserRepository } from '../user/repository/user-repository';
 import { UserModule } from '../user/user.module';
+import { CalculateBalanceService } from '../financial-events/service/calculate-balance.service';
+import { IFinancialEventRepository } from '../financial-events/repository/financial-event.repository';
+import { FinancialEventModule } from '../financial-events/financial-event.module';
 
 @Module({
-  imports: [SequelizeModule.forFeature([TransferModel]), UserModule],
+  imports: [
+    SequelizeModule.forFeature([TransferModel]),
+    UserModule,
+    FinancialEventModule,
+  ],
   controllers: [TransferController],
   providers: [
     {
@@ -23,12 +30,29 @@ import { UserModule } from '../user/user.module';
       useExisting: TransferSequelizeRepository,
     },
     {
+      provide: CalculateBalanceService,
+      useClass: CalculateBalanceService,
+    },
+    {
       provide: CreateTransferUseCase,
       useFactory: (
         transferRepository: ITransferRepository,
         userRepository: IUserRepository,
-      ) => new CreateTransferUseCase(transferRepository, userRepository),
-      inject: ['TransferRepository', 'UserRepository'],
+        financialEventsRepository: IFinancialEventRepository,
+        calculateBalanceService: CalculateBalanceService,
+      ) =>
+        new CreateTransferUseCase(
+          transferRepository,
+          userRepository,
+          financialEventsRepository,
+          calculateBalanceService,
+        ),
+      inject: [
+        'TransferRepository',
+        'UserRepository',
+        'FinancialEventRepository',
+        CalculateBalanceService,
+      ],
     },
   ],
 })

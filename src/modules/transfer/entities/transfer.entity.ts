@@ -1,6 +1,8 @@
 import { randomUUID } from 'node:crypto';
 import { TransferStatusEnum, TransferStatusVO } from './transfer-status.vo';
 import { EntityValidationError } from '../../shared/errors/entity-validation.error';
+import { FinancialEvent } from '../../financial-events/entities/financial-event.entity';
+import { FinancialEventType } from '../../financial-events/entities/financial-event-type.vo';
 
 export type TransferConstructorProps = {
   id?: string;
@@ -89,5 +91,27 @@ export class Transfer {
       status: props.status ?? TransferStatusVO.createInProgress(),
       transferDate: new Date(),
     });
+  }
+
+  public createFinancialEvents(): FinancialEvent[] {
+    const financialEvents: FinancialEvent[] = [];
+
+    const creditFinancialEvent = new FinancialEvent({
+      userId: this.receiverId,
+      amount: this.amount,
+      type: FinancialEventType.createCredit(),
+      tranferId: this.id,
+    });
+
+    const debitFinancialEvent = new FinancialEvent({
+      userId: this.senderId,
+      amount: this.amount,
+      type: FinancialEventType.createDebit(),
+      tranferId: this.id,
+    });
+
+    financialEvents.push(creditFinancialEvent, debitFinancialEvent);
+
+    return financialEvents;
   }
 }
