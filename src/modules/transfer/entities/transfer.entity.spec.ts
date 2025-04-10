@@ -1,3 +1,4 @@
+import { FinancialEventEnum } from '../../financial-events/entities/financial-event-type.vo';
 import { TransferStatusEnum, TransferStatusVO } from './transfer-status.vo';
 import { Transfer } from './transfer.entity';
 
@@ -66,6 +67,38 @@ describe('TransferEntity', () => {
           senderId: 'd11a8539-b84c-4b50-84dc-5eee8278358c',
         });
       }).toThrow('Amount must be greater than 0');
+    });
+  });
+
+  describe('createFinancialEvents', () => {
+    it('should create financial events', () => {
+      const transfer = new Transfer({
+        amount: 10,
+        status: TransferStatusVO.createCompleted(),
+        transferDate: new Date(),
+        receiverId: 'a3872d5f-7ce5-402a-9a87-ffb6b306b5c2',
+        senderId: 'd11a8539-b84c-4b50-84dc-5eee8278358c',
+      });
+
+      const events = transfer.createFinancialEvents();
+
+      expect(events).toBeDefined();
+      expect(events.length).toBe(2);
+
+      const creditEvent = events.find(
+        (event) => event.type.value === FinancialEventEnum.CREDIT,
+      );
+      const debitEvent = events.find(
+        (event) => event.type.value === FinancialEventEnum.DEBIT,
+      );
+
+      expect(creditEvent).toBeDefined();
+      expect(creditEvent!.amount).toBe(10);
+      expect(creditEvent.userId).toBe('a3872d5f-7ce5-402a-9a87-ffb6b306b5c2');
+
+      expect(debitEvent).toBeDefined();
+      expect(debitEvent!.amount).toBe(10);
+      expect(debitEvent.userId).toBe('d11a8539-b84c-4b50-84dc-5eee8278358c');
     });
   });
 });
