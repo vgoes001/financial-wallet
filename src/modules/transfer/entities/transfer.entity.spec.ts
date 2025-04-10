@@ -100,5 +100,62 @@ describe('TransferEntity', () => {
       expect(debitEvent!.amount).toBe(10);
       expect(debitEvent.userId).toBe('d11a8539-b84c-4b50-84dc-5eee8278358c');
     });
+
+    it('should create financial events reversed', () => {
+      const transfer = new Transfer({
+        amount: 10,
+        status: TransferStatusVO.createRefunded(),
+        transferDate: new Date(),
+        receiverId: 'a3872d5f-7ce5-402a-9a87-ffb6b306b5c2',
+        senderId: 'd11a8539-b84c-4b50-84dc-5eee8278358c',
+      });
+
+      const events = transfer.createReversedFinancialEvents();
+
+      expect(events).toBeDefined();
+      expect(events.length).toBe(2);
+
+      const creditEvent = events.find(
+        (event) => event.type.value === FinancialEventEnum.CREDIT,
+      );
+      const debitEvent = events.find(
+        (event) => event.type.value === FinancialEventEnum.DEBIT,
+      );
+
+      expect(creditEvent).toBeDefined();
+      expect(creditEvent!.amount).toBe(10);
+      expect(creditEvent.userId).toBe('d11a8539-b84c-4b50-84dc-5eee8278358c');
+
+      expect(debitEvent).toBeDefined();
+      expect(debitEvent!.amount).toBe(10);
+      expect(debitEvent.userId).toBe('a3872d5f-7ce5-402a-9a87-ffb6b306b5c2');
+    });
+  });
+
+  describe('isReversible', () => {
+    it('should return true if transfer is reversible', () => {
+      const transfer = new Transfer({
+        amount: 10,
+        status: TransferStatusVO.createCompleted(),
+        transferDate: new Date(),
+        createdAt: new Date(),
+        receiverId: 'a3872d5f-7ce5-402a-9a87-ffb6b306b5c2',
+        senderId: 'd11a8539-b84c-4b50-84dc-5eee8278358c',
+      });
+
+      expect(transfer.isReversible()).toBe(true);
+    });
+
+    it('should return false if transfer was created after 24 hours', () => {
+      const transfer = new Transfer({
+        amount: 10,
+        status: TransferStatusVO.createCompleted(),
+        transferDate: new Date(Date.now() - 25 * 60 * 60 * 1000),
+        receiverId: 'a3872d5f-7ce5-402a-9a87-ffb6b306b5c2',
+        senderId: 'd11a8539-b84c-4b50-84dc-5eee8278358c',
+      });
+
+      expect(transfer.isReversible()).toBe(false);
+    });
   });
 });

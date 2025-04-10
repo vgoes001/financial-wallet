@@ -114,4 +114,45 @@ export class Transfer {
 
     return financialEvents;
   }
+
+  public isReversible(): boolean {
+    return (
+      this.status.value !== TransferStatusEnum.REFUNDED &&
+      this.isWithin24Hours()
+    );
+  }
+
+  private isWithin24Hours(): boolean {
+    return this.transferDate.getTime() + 24 * 60 * 60 * 1000 > Date.now();
+  }
+
+  public createReversedFinancialEvents(): FinancialEvent[] {
+    const financialEvents: FinancialEvent[] = [];
+
+    const creditFinancialEvent = new FinancialEvent({
+      userId: this.senderId,
+      amount: this.amount,
+      type: FinancialEventType.createCredit(),
+      tranferId: this.id,
+    });
+
+    const debitFinancialEvent = new FinancialEvent({
+      userId: this.receiverId,
+      amount: this.amount,
+      type: FinancialEventType.createDebit(),
+      tranferId: this.id,
+    });
+
+    financialEvents.push(creditFinancialEvent, debitFinancialEvent);
+
+    return financialEvents;
+  }
+
+  public refund() {
+    if (!this.isReversible()) {
+      throw new EntityValidationError('Transfer is not reversible');
+    }
+
+    this.status = TransferStatusVO.createRefunded();
+  }
 }
