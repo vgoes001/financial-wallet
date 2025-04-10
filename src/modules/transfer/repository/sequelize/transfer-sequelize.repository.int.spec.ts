@@ -6,10 +6,12 @@ import {
   TransferStatusEnum,
   TransferStatusVO,
 } from '../../entities/transfer-status.vo';
+import { UnitOfWorkSequelize } from '../../../shared/unit-of-work/unit-of-work-sequelize';
 
 describe('TransferSequelizeRepository', () => {
   let dbConnection: Sequelize;
   let transferRepository: TransferSequelizeRepository;
+  let unitOfWorkSequelize: UnitOfWorkSequelize;
 
   beforeAll(async () => {
     dbConnection = new Sequelize({
@@ -24,7 +26,11 @@ describe('TransferSequelizeRepository', () => {
     await dbConnection.sync({
       force: true,
     });
-    transferRepository = new TransferSequelizeRepository(TransferModel);
+    unitOfWorkSequelize = new UnitOfWorkSequelize(dbConnection);
+    transferRepository = new TransferSequelizeRepository(
+      TransferModel,
+      unitOfWorkSequelize,
+    );
   });
 
   afterAll(async () => {
