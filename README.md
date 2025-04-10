@@ -26,7 +26,11 @@ Não é obrigatório a criação um arquivo `.env`, caso o arquivo não exista, 
 
 3. Migrar as estruturas de dados
 
-Neste passo é necessário seguir as instruções da [migração de estrutura do banco de dados](#migrando-as-estruturas)
+Para executar as migrations, acesso o container do app e execute o comando:
+
+```shell
+npx sequelize db:migrate
+```
 
 ## Iniciando a API
 
@@ -47,17 +51,3 @@ npm run start:dev
 | DB_USER     | Nome do usuário login do banco de dados                                 | Sim         |              |
 | DB_PASSWORD | Password do usuário para acesso ao banco de dados                       | Sim         |              |
 | DB_DATABASE | Nome do banco de dados                                                  | Sim         |              |
-
-## Bancos de Dados
-
-O sistema usa o bancos de dados MySQL
-
-A aplicação utiliza o [Sequelize](https://sequelize.org/) como ORM. Para que seja possível que a aplicação se comunique com os bancos de dados são necessários algumas configurações.
-
-### Migrando as Estruturas
-
-Por padrão já está sendo executado um script juntamente com o docker compose para lidar com a execução de migrações e criação do banco. Porém é possível executa-las manualmente através do comando:
-
-```shell
-npx sequelize db:migrate
-```
