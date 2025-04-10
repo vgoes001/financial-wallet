@@ -1,5 +1,12 @@
 import { applyDecorators, HttpStatus } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiHeader,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+} from '@nestjs/swagger';
 
 export function CreateTransferDocs(
   target: any,
@@ -25,6 +32,12 @@ export function CreateTransferDocs(
           },
         },
       },
+    }),
+    ApiBearerAuth(),
+    ApiHeader({
+      name: 'Authorization',
+      description: 'Bearer token',
+      required: true,
     }),
     ApiResponse({
       status: HttpStatus.CREATED,
@@ -61,6 +74,12 @@ export function ReverseTransferDocs(
     ApiOperation({
       summary: 'Reverte uma transferência',
       description: 'Reverte uma transferência no sistema.',
+    }),
+    ApiBearerAuth(),
+    ApiHeader({
+      name: 'Authorization',
+      description: 'Bearer token',
+      required: true,
     }),
     ApiParam({
       name: 'id',

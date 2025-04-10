@@ -1,5 +1,11 @@
 import { applyDecorators, HttpStatus } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiHeader,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 
 export function SignInDocs(
   target: any,
@@ -109,6 +115,12 @@ export function CurrentBalanceDocs(
     ApiOperation({
       summary: 'Retorna o saldo atual do usuário',
       description: 'Retorna o saldo atual do usuário logado.',
+    }),
+    ApiBearerAuth(),
+    ApiHeader({
+      name: 'Authorization',
+      description: 'Bearer token',
+      required: true,
     }),
     ApiResponse({
       status: HttpStatus.OK,
