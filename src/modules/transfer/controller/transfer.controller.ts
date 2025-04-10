@@ -1,8 +1,16 @@
-import { Body, Controller, Inject, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Inject,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { CreateTransferUseCase } from '../use-cases/create-transfer/create-transfer.use-case';
 import { CreateTransferDto } from './dtos/create-transfer.dto';
 import { UserId } from 'src/modules/shared/decorators/user-id.decorator';
-import { CreateTransferDocs } from '../transfer.docs';
+import { CreateTransferDocs, ReverseTransferDocs } from '../transfer.docs';
 import { ReverseTransferUseCase } from '../use-cases/reverse-transfer/reverse-transfer.use-case';
 
 @Controller('transfers')
@@ -28,6 +36,8 @@ export class TransferController {
     });
   }
 
+  @ReverseTransferDocs
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Post(':id/reverse')
   async reverseTransfer(
     @Param('id') transferId: string,
