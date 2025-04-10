@@ -1,10 +1,6 @@
 # Financial Wallet
 
-## Pontos importantes
-
 API backend da carteira financeira.
-
-É possível acessar a Docs através deste [link](http://localhost:3000/docs).
 
 ## Requisitos
 
@@ -39,6 +35,10 @@ Para iniciar o servidor de desenvolvimento da api basta executar o comando
 ```shell
 npm run start:dev
 ```
+
+## Docs
+
+Após execução do projeto é possível acessar a Docs através deste [link](http://localhost:3000/docs).
 
 ## Variáveis de Ambiente
 
