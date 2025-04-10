@@ -42,12 +42,13 @@ Após execução do projeto é possível acessar a Docs através deste [link](ht
 
 ## Variáveis de Ambiente
 
-| Variável    | Descrição                                                               | Obrigatório | Valor Padrão |
-| ----------- | ----------------------------------------------------------------------- | ----------- | ------------ |
-| JWT_SECRET  | Palavra utilizada para criptografar e descriptografar o json web token. | Sim         |              |
-| DB_DIALECT  | Dialeto do banco de dados                                               | Sim         |              |
-| DB_HOST     | Host do banco de dados                                                  | Sim         |              |
-| DB_PORT     | Porta onde será executado o banco de dados                              | Sim         |              |
-| DB_USER     | Nome do usuário login do banco de dados                                 | Sim         |              |
-| DB_PASSWORD | Password do usuário para acesso ao banco de dados                       | Sim         |              |
-| DB_DATABASE | Nome do banco de dados                                                  | Sim         |              |
+| Variável     | Descrição                                                               | Obrigatório | Valor Padrão |
+| ------------ | ----------------------------------------------------------------------- | ----------- | ------------ |
+| JWT_SECRET   | Palavra utilizada para criptografar e descriptografar o json web token. | Sim         |              |
+| DB_DIALECT   | Dialeto do banco de dados                                               | Sim         |              |
+| DB_HOST      | Host do banco de dados                                                  | Sim         |              |
+| DB_PORT      | Porta onde será executado o banco de dados                              | Sim         |              |
+| DB_USER      | Nome do usuário login do banco de dados                                 | Sim         |              |
+| DB_PASSWORD  | Password do usuário para acesso ao banco de dados                       | Sim         |              |
+| DB_DATABASE  | Nome do banco de dados                                                  | Sim         |              |
+| RABBITMQ_URI | URL de conexão com o RabbitMQ                                           | Sim         |              |
