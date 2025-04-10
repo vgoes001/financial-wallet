@@ -7,18 +7,29 @@ import { User } from '../../user/entities/user.entity';
 import { TransferToSelfError } from '../../shared/errors/transfer-to-self.error';
 import { NotFoundException } from '@nestjs/common';
 import { TransferStatusEnum } from '../entities/transfer-status.vo';
+import { IFinancialEventRepository } from '../../..//modules/financial-events/repository/financial-event.repository';
+import { CalculateBalanceService } from '../../../modules/financial-events/service/calculate-balance.service';
+import { FinancialEventInMemory } from '../../../modules/financial-events/repository/in-memory/financial-event-in-memory';
+import { FinancialEvent } from '../../../modules/financial-events/entities/financial-event.entity';
+import { FinancialEventType } from '../../../modules/financial-events/entities/financial-event-type.vo';
 
 describe('CreateTransferUseCase', () => {
   let createTransferUseCase: CreateTransferUseCase;
   let transferRepository: ITransferRepository;
   let userRepository: IUserRepository;
+  let financialEventRepository: IFinancialEventRepository;
+  let calculateBalanceService: CalculateBalanceService;
   describe('execute', () => {
     beforeEach(() => {
       userRepository = new UserInMemoryRepository();
       transferRepository = new TransferInMemoryRepository();
+      financialEventRepository = new FinancialEventInMemory();
+      calculateBalanceService = new CalculateBalanceService();
       createTransferUseCase = new CreateTransferUseCase(
         transferRepository,
         userRepository,
+        financialEventRepository,
+        calculateBalanceService,
       );
     });
 
@@ -67,6 +78,37 @@ describe('CreateTransferUseCase', () => {
       }
     });
 
+    it('should not create a transfer if balance is insufficient', async () => {
+      const senderEmail = 'sender@email.com';
+      const receiverEmail = 'receiver@email.com';
+      const sender = new User({
+        email: senderEmail,
+        password: '123456',
+        name: 'Sender',
+      });
+
+      const receiver = new User({
+        email: receiverEmail,
+        name: 'Receiver',
+        password: '123456',
+      });
+
+      await userRepository.create(sender);
+      await userRepository.create(receiver);
+
+      try {
+        await createTransferUseCase.execute({
+          amount: 10,
+          senderId: sender.id,
+          receiverKey: receiverEmail,
+        });
+        fail('should have thrown an error');
+      } catch (e) {
+        expect(e.message).toBe('Insufficient balance');
+        expect(e).toBeInstanceOf(Error);
+      }
+    });
+
     it('should create a transfer', async () => {
       const senderEmail = 'sender@email.com';
       const receiverEmail = 'receiver@email.com';
@@ -82,6 +124,13 @@ describe('CreateTransferUseCase', () => {
         password: '123456',
       });
 
+      const financialEvent = new FinancialEvent({
+        type: FinancialEventType.createCredit(),
+        amount: 100,
+        tranferId: 'transfer-1',
+        userId: sender.id,
+      });
+      await financialEventRepository.create(financialEvent);
       await userRepository.create(sender);
       await userRepository.create(receiver);
 
