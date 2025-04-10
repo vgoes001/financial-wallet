@@ -7,20 +7,21 @@ import { CreateUserUseCase } from './use-cases/create-user/create-user.use-case'
 import { IUserRepository } from './repository/user-repository';
 import { IAuthService } from '../auth/auth.interface';
 import { UserSequelizeRepository } from './repository/sequelize/user-sequelize.repository';
-import { AuthFake } from '../auth/auth.fake';
 import { SignInUserUseCase } from './use-cases/sign-in/sign-in.use-case';
-import { AuthServiceImpl } from '../auth/auth.service';
 import { FinancialEventModule } from '../financial-events/financial-event.module';
 import { IFinancialEventRepository } from '../financial-events/repository/financial-event.repository';
 import { CurrentBalanceUseCase } from './use-cases/current-balance/current-balance.use-case';
 import { CalculateBalanceService } from '../financial-events/service/calculate-balance.service';
 import { TransferModule } from '../transfer/transfer.module';
+import { EventDispatcherInterface } from '../event/event-dispatcher.interface';
+import { EventModule } from '../event/event.module';
 
 @Module({
   imports: [
     SequelizeModule.forFeature([UserModel]),
     AuthModule,
     FinancialEventModule,
+    EventModule,
     forwardRef(() => TransferModule),
   ],
   controllers: [UserController],
@@ -39,15 +40,10 @@ import { TransferModule } from '../transfer/transfer.module';
       provide: CreateUserUseCase,
       useFactory: (
         userRepository: IUserRepository,
-        financialEventRepository: IFinancialEventRepository,
         authService: IAuthService,
-      ) =>
-        new CreateUserUseCase(
-          userRepository,
-          financialEventRepository,
-          authService,
-        ),
-      inject: ['UserRepository', 'FinancialEventRepository', 'AuthService'],
+        EventDispatcher: EventDispatcherInterface,
+      ) => new CreateUserUseCase(userRepository, authService, EventDispatcher),
+      inject: ['UserRepository', 'AuthService', 'EventDispatcher'],
     },
     {
       provide: SignInUserUseCase,

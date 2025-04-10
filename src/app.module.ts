@@ -7,12 +7,14 @@ import { DatabaseModule } from './modules/database/database.module';
 import { ConfigModule } from '@nestjs/config';
 import { TransferModule } from './modules/transfer/transfer.module';
 import { FinancialEventModule } from './modules/financial-events/financial-event.module';
+import { EventModule } from './modules/event/event.module';
 
 @Module({
   imports: [
     UserModule,
     TransferModule,
     FinancialEventModule,
+    EventModule,
     AuthModule,
     DatabaseModule,
     ConfigModule.forRoot({
