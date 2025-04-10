@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { getModelToken, SequelizeModule } from '@nestjs/sequelize';
 import { UserModel } from './repository/sequelize/user.model';
 import { AuthModule } from '../auth/auth.module';
@@ -12,12 +12,16 @@ import { SignInUserUseCase } from './use-cases/sign-in/sign-in.use-case';
 import { AuthServiceImpl } from '../auth/auth.service';
 import { FinancialEventModule } from '../financial-events/financial-event.module';
 import { IFinancialEventRepository } from '../financial-events/repository/financial-event.repository';
+import { CurrentBalanceUseCase } from './use-cases/current-balance/current-balance.use-case';
+import { CalculateBalanceService } from '../financial-events/service/calculate-balance.service';
+import { TransferModule } from '../transfer/transfer.module';
 
 @Module({
   imports: [
     SequelizeModule.forFeature([UserModel]),
     AuthModule,
     FinancialEventModule,
+    forwardRef(() => TransferModule),
   ],
   controllers: [UserController],
   providers: [
@@ -52,6 +56,15 @@ import { IFinancialEventRepository } from '../financial-events/repository/financ
         authService: IAuthService,
       ) => new SignInUserUseCase(userRepository, authService),
       inject: ['UserRepository', 'AuthService'],
+    },
+    {
+      provide: CurrentBalanceUseCase,
+      useFactory: (
+        financialEventRepository: IFinancialEventRepository,
+        calculateBalance: CalculateBalanceService,
+      ) =>
+        new CurrentBalanceUseCase(financialEventRepository, calculateBalance),
+      inject: ['FinancialEventRepository', CalculateBalanceService],
     },
   ],
   exports: [

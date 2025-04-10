@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { getModelToken, SequelizeModule } from '@nestjs/sequelize';
 import { TransferModel } from './repository/sequelize/transfer.model';
 import { TransferController } from './controller/transfer.controller';
@@ -15,7 +15,7 @@ import { ReverseTransferUseCase } from './use-cases/reverse-transfer/reverse-tra
 @Module({
   imports: [
     SequelizeModule.forFeature([TransferModel]),
-    UserModule,
+    forwardRef(() => UserModule),
     FinancialEventModule,
   ],
   controllers: [TransferController],
@@ -66,6 +66,12 @@ import { ReverseTransferUseCase } from './use-cases/reverse-transfer/reverse-tra
           financialEventRepository,
         ),
       inject: ['TransferRepository', 'FinancialEventRepository'],
+    },
+  ],
+  exports: [
+    {
+      provide: CalculateBalanceService,
+      useClass: CalculateBalanceService,
     },
   ],
 })
