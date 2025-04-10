@@ -18,6 +18,11 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    const type = context.getType<'rmq'>();
+    if (type === 'rmq') {
+      return true;
+    }
+
     const request = context.switchToHttp().getRequest();
     const isPublic = this.reflector.get<boolean>(
       'isPublic',

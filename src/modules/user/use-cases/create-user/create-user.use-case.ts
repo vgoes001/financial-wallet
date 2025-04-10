@@ -4,13 +4,13 @@ import { UserMapper } from '../../mapper/user.mapper';
 import { User } from '../../entities/user.entity';
 import { CreateUserInput } from './create-user.input';
 import { IAuthService } from 'src/modules/auth/auth.interface';
-import { EventDispatcherInterface } from 'src/modules/event/event-dispatcher.interface';
+import { IMessageBroker } from 'src/modules/message-broker/message-broker.interface';
 
 export class CreateUserUseCase {
   constructor(
     private userRepository: IUserRepository,
     private authService: IAuthService,
-    private eventDispatcher: EventDispatcherInterface,
+    private messageBroker: IMessageBroker,
   ) {}
 
   async execute(input: CreateUserInput) {
@@ -26,7 +26,7 @@ export class CreateUserUseCase {
     user.changePassword(hashedPassword);
 
     const userCreated = await this.userRepository.create(user);
-    await this.eventDispatcher.publish('user.created', userCreated);
+    await this.messageBroker.publish('user.created', userCreated);
 
     return UserMapper.toOutput(userCreated);
   }
