@@ -6,25 +6,25 @@ import { UserMapper } from '../../mapper/user.mapper';
 import { BadRequestException } from '@nestjs/common';
 import { IUserRepository } from '../../repository/user-repository';
 import { AuthFake } from '../../../auth/auth.fake';
-import { EventDispatcherInterface } from '../../../../modules/event/event-dispatcher.interface';
-import { EventDispatcherFake } from '../../../../modules/event/event-dispatcher-in-memory';
+import { IMessageBroker } from '../../../message-broker/message-broker.interface';
+import { MessageBrokerFakeService } from '../../../message-broker/message-broker-fake.service';
 
 describe('CreateUserUseCase', () => {
   let createUserUseCase: CreateUserUseCase;
   let userRepository: IUserRepository;
   let authService: IAuthService;
-  let eventDispatcher: EventDispatcherInterface;
+  let broker: IMessageBroker;
 
   describe('execute', () => {
     beforeEach(() => {
       userRepository = new UserInMemoryRepository();
       authService = new AuthFake();
-      eventDispatcher = new EventDispatcherFake();
+      broker = new MessageBrokerFakeService();
 
       createUserUseCase = new CreateUserUseCase(
         userRepository,
         authService,
-        eventDispatcher,
+        broker,
       );
     });
 
