@@ -1,5 +1,5 @@
 import { Body, Controller, Inject, Post } from '@nestjs/common';
-import { CreateTransferUseCase } from '../use-cases/create-transfer.use-case';
+import { CreateTransferUseCase } from '../use-cases/create-transfer/create-transfer.use-case';
 import { CreateTransferDto } from './dtos/create-transfer.dto';
 import { UserId } from 'src/modules/shared/decorators/user-id.decorator';
 import { CreateTransferDocs } from '../transfer.docs';

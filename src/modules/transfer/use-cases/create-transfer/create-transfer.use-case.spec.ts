@@ -1,17 +1,17 @@
-import { IUserRepository } from '../../user/repository/user-repository';
-import { ITransferRepository } from '../repository/transfer-repository';
+import { IUserRepository } from '../../../user/repository/user-repository';
+import { ITransferRepository } from '../../repository/transfer-repository';
 import { CreateTransferUseCase } from './create-transfer.use-case';
-import { UserInMemoryRepository } from '../../user/repository/in-memory/user-in-memory.repository';
-import { TransferInMemoryRepository } from '../repository/in-memory/transfer-in-memory.repository';
-import { User } from '../../user/entities/user.entity';
-import { TransferToSelfError } from '../../shared/errors/transfer-to-self.error';
+import { UserInMemoryRepository } from '../../../user/repository/in-memory/user-in-memory.repository';
+import { TransferInMemoryRepository } from '../../repository/in-memory/transfer-in-memory.repository';
+import { User } from '../../../user/entities/user.entity';
+import { TransferToSelfError } from '../../../shared/errors/transfer-to-self.error';
 import { NotFoundException } from '@nestjs/common';
-import { TransferStatusEnum } from '../entities/transfer-status.vo';
-import { IFinancialEventRepository } from '../../..//modules/financial-events/repository/financial-event.repository';
-import { CalculateBalanceService } from '../../../modules/financial-events/service/calculate-balance.service';
-import { FinancialEventInMemory } from '../../../modules/financial-events/repository/in-memory/financial-event-in-memory';
-import { FinancialEvent } from '../../../modules/financial-events/entities/financial-event.entity';
-import { FinancialEventType } from '../../../modules/financial-events/entities/financial-event-type.vo';
+import { TransferStatusEnum } from '../../entities/transfer-status.vo';
+import { IFinancialEventRepository } from '../../../financial-events/repository/financial-event.repository';
+import { CalculateBalanceService } from '../../../financial-events/service/calculate-balance.service';
+import { FinancialEventInMemory } from '../../../financial-events/repository/in-memory/financial-event-in-memory';
+import { FinancialEvent } from '../../../financial-events/entities/financial-event.entity';
+import { FinancialEventType } from '../../../financial-events/entities/financial-event-type.vo';
 
 describe('CreateTransferUseCase', () => {
   let createTransferUseCase: CreateTransferUseCase;

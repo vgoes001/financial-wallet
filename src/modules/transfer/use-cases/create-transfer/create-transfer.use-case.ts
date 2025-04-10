@@ -1,14 +1,14 @@
 import { IUserRepository } from 'src/modules/user/repository/user-repository';
-import { Transfer } from '../entities/transfer.entity';
-import { ITransferRepository } from '../repository/transfer-repository';
+import { Transfer } from '../../entities/transfer.entity';
+import { ITransferRepository } from '../../repository/transfer-repository';
 import { CreateTransferInput } from './create-transfer.input';
 import { NotFoundException } from '@nestjs/common';
-import { TransferMapper } from '../mapper/transfer.mapper';
-import { TransferToSelfError } from '../../shared/errors/transfer-to-self.error';
-import { TransferStatusVO } from '../entities/transfer-status.vo';
-import { CalculateBalanceService } from '../../../modules/financial-events/service/calculate-balance.service';
-import { IFinancialEventRepository } from '../../../modules/financial-events/repository/financial-event.repository';
-import { InsufficientBalanceError } from '../../../modules/shared/errors/insufficient-balance.error';
+import { TransferMapper } from '../../mapper/transfer.mapper';
+import { TransferToSelfError } from '../../../shared/errors/transfer-to-self.error';
+import { TransferStatusVO } from '../../entities/transfer-status.vo';
+import { CalculateBalanceService } from '../../../financial-events/service/calculate-balance.service';
+import { IFinancialEventRepository } from '../../../financial-events/repository/financial-event.repository';
+import { InsufficientBalanceError } from '../../../shared/errors/insufficient-balance.error';
 
 export class CreateTransferUseCase {
   constructor(

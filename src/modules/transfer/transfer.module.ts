@@ -3,7 +3,7 @@ import { getModelToken, SequelizeModule } from '@nestjs/sequelize';
 import { TransferModel } from './repository/sequelize/transfer.model';
 import { TransferController } from './controller/transfer.controller';
 import { TransferSequelizeRepository } from './repository/sequelize/transfer-sequelize.repository';
-import { CreateTransferUseCase } from './use-cases/create-transfer.use-case';
+import { CreateTransferUseCase } from './use-cases/create-transfer/create-transfer.use-case';
 import { ITransferRepository } from './repository/transfer-repository';
 import { IUserRepository } from '../user/repository/user-repository';
 import { UserModule } from '../user/user.module';
